@@ -255,6 +255,7 @@
     <header>
       <p class="eyebrow">Marknadsundersökning</p>
       <h1>Hjälp oss förstå hur ni hanterar närvaro</h1>
+      <p class="lead">Vi undersöker om det finns ett verkligt behov av ett digitalt system för att verifiera närvaro via QR-kod och BankID. Tar ca 3–5 minuter.</p>
       <div class="pill-row">
         <span class="pill">Anonymt</span>
         <span class="pill">3–5 minuter</span>
@@ -482,6 +483,11 @@
   </div>
 
   <script>
+    // ─────────────────────────────────────────────
+    // STEG 1: Klistra in din Apps Script-URL här
+    // ─────────────────────────────────────────────
+    const APPS_SCRIPT_URL = 'KLISTRA_IN_DIN_URL_HÄR';
+
     let current = 0;
 
     function updateProgress(n) {
@@ -501,7 +507,50 @@
       }
     }
 
-    function submit() {
+    function getRadioValue(name) {
+      const el = document.querySelector(`input[name="${name}"]:checked`);
+      return el ? el.value : '';
+    }
+
+    function getCheckboxValues(name) {
+      return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
+        .map(el => el.value).join(', ');
+    }
+
+    async function submit() {
+      const btn = document.querySelector('#p3 .btn.primary');
+      btn.textContent = 'Skickar...';
+      btn.disabled = true;
+
+      const data = {
+        timestamp:      new Date().toISOString(),
+        orgtype:        getRadioValue('orgtype'),
+        role:           getRadioValue('role'),
+        vikt_narvaro:   document.getElementById('r1').value,
+        event_typer:    getCheckboxValues('event'),
+        nuvarande:      getRadioValue('current'),
+        problem_storlek: document.getElementById('r2').value,
+        fusk:           getRadioValue('fusk'),
+        tid:            getRadioValue('tid'),
+        konsekvenser:   getCheckboxValues('konsekvens'),
+        intresse:       document.getElementById('r3').value,
+        krav:           getCheckboxValues('krav'),
+        prismodell:     getRadioValue('pris'),
+        kommentar:      document.querySelector('textarea').value,
+        kontakt:        document.querySelector('input[type=text]').value,
+      };
+
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+      } catch (e) {
+        console.error('Kunde inte skicka svar:', e);
+      }
+
       document.getElementById('p' + current).classList.remove('active');
       document.getElementById('psuccess').classList.add('active');
       document.getElementById('psuccess').style.display = 'block';

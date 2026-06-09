@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marknadsundersökning – Närvaro</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #F7F6F3;
+      color: #1a1a1a;
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .shell {
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 2.5rem;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 600;
+      line-height: 1.25;
+      color: #111;
+      margin-bottom: 10px;
+    }
+
+    .lead {
+      font-size: 15px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .pill {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      background: #ECEAE5;
+      color: #555;
+    }
+
+    /* Progress */
+    .progress-bar {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 2.5rem;
+    }
+
+    .seg {
+      height: 3px;
+      flex: 1;
+      border-radius: 99px;
+      background: #DDD;
+      transition: background 0.35s;
+    }
+
+    .seg.done { background: #5B54C8; }
+
+    /* Card */
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid #E4E2DC;
+      padding: 2rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 1.5rem;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #F0EEE9;
+    }
+
+    /* Questions */
+    .q + .q { margin-top: 1.75rem; }
+
+    .q-label {
+      font-size: 15px;
+      font-weight: 500;
+      color: #111;
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+
+    .q-sub {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 12px;
+      margin-top: 2px;
+    }
+
+    /* Radio & Checkbox */
+    .options { display: flex; flex-direction: column; gap: 8px; }
+
+    .opt {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #E4E2DC;
+      cursor: pointer;
+      font-size: 14px;
+      color: #333;
+      transition: border-color 0.15s, background 0.15s;
+      user-select: none;
+    }
+
+    .opt:hover { border-color: #B0ABEC; background: #F5F4FD; }
+
+    .opt input { accent-color: #5B54C8; width: 16px; height: 16px; flex-shrink: 0; }
+
+    .opt.selected { border-color: #5B54C8; background: #F0EFFE; }
+
+    /* Scale */
+    .scale-wrap { margin-top: 4px; }
+
+    .scale-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .scale-row input[type=range] {
+      flex: 1;
+      accent-color: #5B54C8;
+      height: 4px;
+    }
+
+    .scale-val {
+      font-size: 20px;
+      font-weight: 600;
+      color: #5B54C8;
+      min-width: 28px;
+      text-align: center;
+    }
+
+    .scale-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #999;
+      margin-top: 6px;
+    }
+
+    /* Textarea & text input */
+    textarea, input[type=text], input[type=email] {
+      width: 100%;
+      border: 1px solid #E4E2DC;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #111;
+      background: #FAFAF8;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    textarea { min-height: 80px; }
+    textarea:focus, input[type=text]:focus, input[type=email]:focus { border-color: #5B54C8; background: #fff; }
+
+    /* Nav buttons */
+    .nav-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 12px 20px;
+      border-radius: 9px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid #E4E2DC;
+      background: #fff;
+      color: #333;
+      transition: background 0.15s;
+    }
+
+    .btn:hover { background: #F5F4FD; }
+
+    .btn.primary {
+      background: #5B54C8;
+      color: #fff;
+      border-color: #5B54C8;
+    }
+
+    .btn.primary:hover { background: #4A43B0; }
+
+    /* Pages */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* Success */
+    .success {
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+
+    .check-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #EAFAF3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+
+    .check-icon svg { width: 32px; height: 32px; stroke: #1D9E75; fill: none; stroke-width: 2.5; }
+
+    .success h2 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+    .success p { font-size: 15px; color: #666; line-height: 1.6; }
+
+    @media (max-width: 500px) {
+      .card { padding: 1.25rem; }
+      h1 { font-size: 21px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+
+    <header>
+      <p class="eyebrow">Marknadsundersökning</p>
+      <h1>Hjälp oss förstå hur ni hanterar närvaro</h1>
+      <p class="lead">Vi undersöker om det finns ett verkligt behov av ett digitalt system för att verifiera närvaro via QR-kod och BankID. Tar ca 3–5 minuter.</p>
+      <div class="pill-row">
+        <span class="pill">Anonymt</span>
+        <span class="pill">3–5 minuter</span>
+        <span class="pill">5 frågor per steg</span>
+      </div>
+    </header>
+
+    <div class="progress-bar">
+      <div class="seg" id="s0"></div>
+      <div class="seg" id="s1"></div>
+      <div class="seg" id="s2"></div>
+      <div class="seg" id="s3"></div>
+    </div>
+
+    <!-- Page 0 -->
+    <div class="page active" id="p0">
+      <div class="card">
+        <p class="section-label">Din organisation</p>
+
+        <div class="q">
+          <p class="q-label">Vilken typ av organisation representerar du?</p>
+          <div class="options" id="orgtype">
+            <label class="opt"><input type="radio" name="orgtype" value="hogskola"> Högskola / Universitet</label>
+            <label class="opt"><input type="radio" name="orgtype" value="gymnasium"> Gymnasium / Yrkesutbildning</label>
+            <label class="opt"><input type="radio" name="orgtype" value="grundskola"> Grundskola</label>
+            <label class="opt"><input type="radio" name="orgtype" value="foretag_stort"> Företag (fler än 50 anställda)</label>
+            <label class="opt"><input type="radio" name="orgtype" value="foretag_litet"> Företag (färre än 50 anställda)</label>
+            <label class="opt"><input type="radio" name="orgtype" value="offentlig"> Offentlig sektor / Myndighet</label>
+            <label class="opt"><input type="radio" name="orgtype" value="annan"> Annan</label>
+          </div>
+        </div>
+
+        <div class="q">
+          <p class="q-label">Vad är din roll?</p>
+          <div class="options" id="role">
+            <label class="opt"><input type="radio" name="role" value="ledning"> Ledning / Rektor / VD</label>
+            <label class="opt"><input type="radio" name="role" value="larare"> Lärare / Utbildare / Handledare</label>
+            <label class="opt"><input type="radio" name="role" value="hr"> HR / Personalansvarig</label>
+            <label class="opt"><input type="radio" name="role" value="admin"> Administratör / Koordinator</label>
+            <label class="opt"><input type="radio" name="role" value="it"> IT / Systemansvarig</label>
+            <label class="opt"><input type="radio" name="role" value="annan"> Annan</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn primary" onclick="goTo(1)">Nästa →</button>
+      </div>
+    </div>
+
+    <!-- Page 1 -->
+    <div class="page" id="p1">
+      <div class="card">
+        <p class="section-label">Närvaro idag</p>
+
+        <div class="q">
+          <p class="q-label">Hur viktig är närvaro vid tillställningar i er organisation?</p>
+          <div class="scale-wrap">
+            <div class="scale-row">
+              <input type="range" min="1" max="10" value="5" id="r1" oninput="document.getElementById('v1').textContent=this.value">
+              <span class="scale-val" id="v1">5</span>
+            </div>
+            <div class="scale-labels"><span>Inte viktigt</span><span>Extremt viktigt</span></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <p class="q-label">Vilka tillställningar kräver obligatorisk närvaro?</p>
+          <p class="q-sub">Välj alla som stämmer</p>
+          <div class="options">
+            <label class="opt"><input type="checkbox" name="event" value="examination"> Examinationsmoment / Tentamina</label>
+            <label class="opt"><input type="checkbox" name="event" value="forelasning"> Föreläsningar / Lektioner</label>
+            <label class="opt"><input type="checkbox" name="event" value="mote"> Möten / Stormöten</label>
+            <label class="opt"><input type="checkbox" name="event" value="utbildning"> Interna utbildningar / Kurser</label>
+            <label class="opt"><input type="checkbox" name="event" value="ovning"> Övningar / Praktiska moment</label>
+            <label class="opt"><input type="checkbox" name="event" value="seminarium"> Seminarier / Workshops</label>
+            <label class="opt"><input type="checkbox" name="event" value="annat"> Annat</label>
+          </div>
+        </div>
+
+        <div class="q">
+          <p class="q-label">Hur registrerar ni närvaro idag?</p>
+          <div class="options" id="current">
+            <label class="opt"><input type="radio" name="current" value="papper"> Papper / Namnlista</label>
+            <label class="opt"><input type="radio" name="current" value="system"> Digitalt system (t.ex. Ladok, Teams)</label>
+            <label class="opt"><input type="radio" name="current" value="manuell"> Manuell upprop / handräckning</label>
+            <label class="opt"><input type="radio" name="current" value="ingen"> Vi registrerar inte närvaro</label>
+            <label class="opt"><input type="radio" name="current" value="blandat"> Blandat / Olika metoder beroende på tillfälle</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn" onclick="goTo(0)">← Tillbaka</button>
+        <button class="btn primary" onclick="goTo(2)">Nästa →</button>
+      </div>
+    </div>
+
+    <!-- Page 2 -->
+    <div class="page" id="p2">
+      <div class="card">
+        <p class="section-label">Utmaningar och konsekvenser</p>
+
+        <div class="q">
+          <p class="q-label">Hur stort problem är det att verifiera att rätt person är på plats?</p>
+          <div class="scale-wrap">
+            <div class="scale-row">
+              <input type="range" min="1" max="10" value="5" id="r2" oninput="document.getElementById('v2').textContent=this.value">
+              <span class="scale-val" id="v2">5</span>
+            </div>
+            <div class="scale-labels"><span>Inget problem</span><span>Stort problem</span></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <p class="q-label">Har ni upplevt att personer ska ha närvarat men faktiskt inte var på plats?</p>
+          <div class="options" id="fusk">
+            <label class="opt"><input type="radio" name="fusk" value="ja_ofta"> Ja, det händer ofta</label>
+            <label class="opt"><input type="radio" name="fusk" value="ja_ibland"> Ja, det har hänt ibland</label>
+            <label class="opt"><input type="radio" name="fusk" value="nej"> Nej, inte vad vi känner till</label>
+            <label class="opt"><input type="radio" name="fusk" value="vet_ej"> Vet ej / Svårt att säga</label>
+          </div>
+        </div>
+
+        <div class="q">
+          <p class="q-label">Hur mycket tid lägger ni på att administrera och följa upp närvaro per vecka?</p>
+          <div class="options" id="tid">
+            <label class="opt"><input type="radio" name="tid" value="under30"> Under 30 minuter</label>
+            <label class="opt"><input type="radio" name="tid" value="30_2h"> 30 min – 2 timmar</label>
+            <label class="opt"><input type="radio" name="tid" value="over2h"> Mer än 2 timmar</label>
+            <label class="opt"><input type="radio" name="tid" value="vet_ej"> Vet ej</label>
+          </div>
+        </div>
+
+        <div class="q">
+          <p class="q-label">Vilka konsekvenser uppstår om närvaro inte kan verifieras korrekt?</p>
+          <p class="q-sub">Välj alla som stämmer</p>
+          <div class="options">
+            <label class="opt"><input type="checkbox" name="konsekvens" value="juridisk"> Juridiska / Regulatoriska krav uppfylls inte</label>
+            <label class="opt"><input type="checkbox" name="konsekvens" value="kvalitet"> Sämre kvalitet på utbildning eller möte</label>
+            <label class="opt"><input type="checkbox" name="konsekvens" value="fusk"> Risk för fusk / missbruk</label>
+            <label class="opt"><input type="checkbox" name="konsekvens" value="rapport"> Svårt att rapportera till ledning eller myndighet</label>
+            <label class="opt"><input type="checkbox" name="konsekvens" value="ingen"> Inga större konsekvenser</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn" onclick="goTo(1)">← Tillbaka</button>
+        <button class="btn primary" onclick="goTo(3)">Nästa →</button>
+      </div>
+    </div>
+
+    <!-- Page 3 -->
+    <div class="page" id="p3">
+      <div class="card">
+        <p class="section-label">Din syn på lösningen</p>
+
+        <div class="q">
+          <p class="q-label">Hur intressant är ett system där deltagare bekräftar närvaro via QR-kod + GPS + BankID?</p>
+          <div class="scale-wrap">
+            <div class="scale-row">
+              <input type="range" min="1" max="10" value="5" id="r3" oninput="document.getElementById('v3').textContent=this.value">
+              <span class="scale-val" id="v3">5</span>
+            </div>
+            <div class="scale-labels"><span>Inte intressant</span><span>Mycket intressant</span></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <p class="q-label">Vad är viktigast för att ni ska kunna använda ett sådant system?</p>
+          <p class="q-sub">Välj alla som stämmer</p>
+          <div class="options">
+            <label class="opt"><input type="checkbox" name="krav" value="gdpr"> GDPR-säkert / Integritetsskydd</label>
+            <label class="opt"><input type="checkbox" name="krav" value="integration"> Integration med befintliga system (t.ex. Ladok, AD)</label>
+            <label class="opt"><input type="checkbox" name="krav" value="pris"> Rimligt pris</label>
+            <label class="opt"><input type="checkbox" name="krav" value="enkelt"> Enkelt att använda för deltagarna</label>
+            <label class="opt"><input type="checkbox" name="krav" value="support"> Bra support och driftsäkerhet</label>
+            <label class="opt"><input type="checkbox" name="krav" value="offline"> Fungerar utan stabil internetuppkoppling</label>
+          </div>
+        </div>
+
+        <div class="q">
+          <p class="q-label">Vilken prismodell föredrar ni?</p>
+          <div class="options" id="pris">
+            <label class="opt"><input type="radio" name="pris" value="per_user"> Per användare / månad</label>
+            <label class="opt"><input type="radio" name="pris" value="per_event"> Per tillställning</label>
+            <label class="opt"><input type="radio" name="pris" value="flat"> Fast årsavgift</label>
+            <label class="opt"><input type="radio" name="pris" value="ingen_uppfattning"> Ingen uppfattning</label>
+          </div>
+        </div>
+
+        <div class="q">
+          <p class="q-label">Övriga kommentarer eller behov</p>
+          <p class="q-sub">Frivilligt – berätta gärna mer om era utmaningar</p>
+          <textarea placeholder="Skriv här..."></textarea>
+        </div>
+
+        <div class="q">
+          <p class="q-label">Kan vi kontakta dig för en kort uppföljningsintervju?</p>
+          <p class="q-sub">Frivilligt – lämna e-post eller telefonnummer om du vill</p>
+          <input type="text" placeholder="din@epost.se eller 070-xxx xx xx">
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn" onclick="goTo(2)">← Tillbaka</button>
+        <button class="btn primary" onclick="submit()">Skicka svar</button>
+      </div>
+    </div>
+
+    <!-- Success -->
+    <div class="page" id="psuccess">
+      <div class="card">
+        <div class="success">
+          <div class="check-icon">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <h2>Tack för ditt svar!</h2>
+          <p>Dina svar hjälper oss förstå om detta löser ett verkligt problem.<br>Vi hör av oss om du lämnade kontaktuppgifter.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let current = 0;
+
+    function updateProgress(n) {
+      for (let i = 0; i < 4; i++) {
+        document.getElementById('s' + i).classList.toggle('done', i <= n);
+      }
+    }
+
+    function goTo(n) {
+      document.getElementById('p' + current).classList.remove('active');
+      current = n;
+      const next = document.getElementById('p' + current);
+      if (next) {
+        next.classList.add('active');
+        updateProgress(n);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function submit() {
+      document.getElementById('p' + current).classList.remove('active');
+      document.getElementById('psuccess').classList.add('active');
+      document.getElementById('psuccess').style.display = 'block';
+      document.querySelector('.progress-bar').style.visibility = 'hidden';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Highlight selected radio/checkbox options
+    document.querySelectorAll('.opt input').forEach(input => {
+      input.addEventListener('change', () => {
+        const name = input.name;
+        if (input.type === 'radio') {
+          document.querySelectorAll(`input[name="${name}"]`).forEach(i => {
+            i.closest('.opt').classList.toggle('selected', i.checked);
+          });
+        } else {
+          input.closest('.opt').classList.toggle('selected', input.checked);
+        }
+      });
+    });
+
+    updateProgress(0);
+  </script>
+</body>
+</html>
